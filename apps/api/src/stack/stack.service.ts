@@ -49,4 +49,27 @@ export class StackService {
       },
     });
   }
+
+  async deleteTask(userId: number, stackId: number, taskId: number) {
+    const stack = await this.prismaService.stack.findFirst({
+      where: {
+        id: stackId,
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!stack) {
+      throw new BadRequestException('Stack not found');
+    }
+
+    return await this.prismaService.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
 }

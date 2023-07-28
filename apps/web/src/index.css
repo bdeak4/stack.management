@@ -139,7 +139,6 @@ form button {
 
 .stack-add input {
   flex-grow: 1;
-  /* width: 350px; */
 }
 
 .stack-add button {

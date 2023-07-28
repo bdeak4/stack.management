@@ -24,7 +24,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path={Path.Stacks} component={StackPage} />
         <Route path={Path.CatchAll} component={NotFoundPage} />
       </Switch>
-      <Toaster toastOptions={{ className: 'notification' }} />
+      <Toaster
+        toastOptions={{
+          className: 'notification',
+          iconTheme: {
+            primary: '#fdfd96',
+            secondary: '#111',
+          },
+        }}
+      />
     </QueryClientProvider>
   </React.StrictMode>,
 );

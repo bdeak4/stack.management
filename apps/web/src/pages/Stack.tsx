@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { NotFoundPage } from './NotFound';
 import { api } from '../utils/api';
 import { Stack, Task } from '../types';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { toast } from 'react-hot-toast';
 
 export const StackPage = () => {
@@ -36,7 +36,7 @@ export const StackPage = () => {
     return <NotFoundPage />;
   }
 
-  const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -44,9 +44,16 @@ export const StackPage = () => {
       content: HTMLInputElement;
     };
 
-    const task = await api.post<never, Task>(`/stack/${stack.id}/task`, {
-      content: formElements.content.value,
-    });
+    const task = await toast.promise(
+      api.post<never, Task>(`/stack/${stackId}/task`, {
+        content: formElements.content.value,
+      }),
+      {
+        loading: 'Creating task...',
+        success: 'Task created',
+        error: 'Failed to create task',
+      },
+    );
 
     queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
       return stacks.map((stack) =>
@@ -57,6 +64,25 @@ export const StackPage = () => {
     });
 
     form.reset();
+  };
+
+  const handleDeleteTask = async (taskId: number) => {
+    queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
+      return stacks.map((stack) =>
+        stack.id === stackId
+          ? {
+              ...stack,
+              tasks: stack.tasks.filter((task) => task.id !== taskId),
+            }
+          : stack,
+      );
+    });
+
+    await toast.promise(api.delete(`/stack/${stackId}/task/${taskId}`), {
+      loading: 'Deleting task...',
+      success: 'Task deleted',
+      error: 'Failed to delete task',
+    });
   };
 
   return (
@@ -80,12 +106,12 @@ export const StackPage = () => {
           ))}
         </ul>
         <div className="stack-buttons">
-          <button>&#43;</button>
-          <button>rm</button>
+          <button type="button">&#43;</button>
+          <button type="button">rm</button>
         </div>
       </div>
 
-      <form className="stack-add" onSubmit={handleAddTask}>
+      <form className="stack-add" onSubmit={handleCreateTask}>
         <input
           name="content"
           type="text"
@@ -101,8 +127,12 @@ export const StackPage = () => {
           <li key={task.id}>
             <div className="content">{task.content}</div>
             <div className="stack-buttons">
-              <button className="move">mv</button>
-              <button>rm</button>
+              <button type="button" className="move">
+                mv
+              </button>
+              <button type="button" onClick={() => handleDeleteTask(task.id)}>
+                rm
+              </button>
             </div>
           </li>
         ))}

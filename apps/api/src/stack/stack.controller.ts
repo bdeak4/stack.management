@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -29,5 +30,15 @@ export class StackController {
     @Body() { content },
   ) {
     return this.stackService.createTask(user.id, stackId, content);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:stackId/task/:taskId')
+  deleteTask(
+    @Req() { user },
+    @Param('stackId', ParseIntPipe) stackId: number,
+    @Param('taskId', ParseIntPipe) taskId: number,
+  ) {
+    return this.stackService.deleteTask(user.id, stackId, taskId);
   }
 }
