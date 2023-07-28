@@ -26,6 +26,69 @@ export class StackService {
           },
         },
       },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+  }
+
+  async createStack(userId: number, name: string) {
+    return await this.prismaService.stack.create({
+      data: {
+        name,
+        userId,
+      },
+      include: {
+        tasks: true,
+        _count: {
+          select: {
+            tasks: true,
+          },
+        },
+      },
+    });
+  }
+
+  async deleteStack(userId: number, stackId: number) {
+    const stack = await this.prismaService.stack.findFirst({
+      where: {
+        id: stackId,
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!stack) {
+      throw new BadRequestException('Stack not found');
+    }
+
+    const count = await this.prismaService.stack.count({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (count === 1) {
+      throw new BadRequestException('You cannot delete the last stack');
+    }
+
+    await this.prismaService.task.updateMany({
+      where: {
+        stackId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return await this.prismaService.stack.update({
+      where: {
+        id: stackId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
     });
   }
 

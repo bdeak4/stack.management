@@ -7,6 +7,12 @@ import { Stack, Task } from '../types';
 import { useQuery, useQueryClient } from 'react-query';
 import { toast } from 'react-hot-toast';
 
+const compareStacks = (a: Stack, b: Stack) => {
+  if (a.name > b.name) return 1;
+  if (a.name < b.name) return -1;
+  return 0;
+};
+
 export const StackPage = () => {
   const [location, setLocation] = useLocation();
   const queryClient = useQueryClient();
@@ -24,17 +30,49 @@ export const StackPage = () => {
     );
   }
 
-  const stackId = +location.split('/')[2];
-
-  if (!stackId && stacks?.length) {
-    setLocation(`/stack/${stacks[0].id}`); // TODO redirect to last updated
-  }
+  const stackId = +location.split('/')[2] || stacks?.[0].id;
 
   const stack = stacks?.find((stack) => stack.id === stackId);
 
   if (!stack) {
     return <NotFoundPage />;
   }
+
+  const handleCreateStack = async () => {
+    const name = prompt('Stack name:');
+
+    await toast.promise(api.post<never, Stack>('/stack', { name }), {
+      loading: 'Creating stack...',
+      success: (stack) => {
+        queryClient.setQueryData<Stack[]>('stack', (stacks = []) =>
+          [...stacks, stack].sort(compareStacks),
+        );
+
+        setLocation(`/stack/${stack.id}`);
+
+        return 'Stack created';
+      },
+      error: (error) => error,
+    });
+  };
+
+  const handleDeleteStack = async () => {
+    if (!confirm('Are you sure?')) return;
+
+    await toast.promise(api.delete(`/stack/${stackId}`), {
+      loading: 'Deleting stack...',
+      success: () => {
+        queryClient.setQueryData<Stack[]>('stack', (stacks = []) =>
+          stacks.filter((stack) => stack.id !== stackId),
+        );
+
+        setLocation('/stack');
+
+        return 'Stack deleted';
+      },
+      error: (error) => error,
+    });
+  };
 
   const handleCreateTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -108,8 +146,12 @@ export const StackPage = () => {
           ))}
         </ul>
         <div className="stack-buttons">
-          <button type="button">&#43;</button>
-          <button type="button">rm</button>
+          <button type="button" onClick={handleCreateStack}>
+            &#43;
+          </button>
+          <button type="button" onClick={handleDeleteStack}>
+            rm
+          </button>
         </div>
       </div>
 

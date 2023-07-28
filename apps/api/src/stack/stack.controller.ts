@@ -23,6 +23,21 @@ export class StackController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post()
+  createStack(@Req() { user }, @Body() { name }) {
+    return this.stackService.createStack(user.id, name);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:stackId')
+  deleteStack(
+    @Req() { user },
+    @Param('stackId', ParseIntPipe) stackId: number,
+  ) {
+    return this.stackService.deleteStack(user.id, stackId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('/:stackId/task')
   createTask(
     @Req() { user },
