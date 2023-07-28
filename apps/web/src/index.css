@@ -1,0 +1,35 @@
+body {
+  font-family: 'Inconsolata', monospace;
+  background-color: #111;
+  color: #eee;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+a {
+  color: #eee;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.highlight {
+  background-color: #fdfd96;
+  color: #111;
+  padding: 2px 4px;
+  text-decoration: none;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+nav {
+  display: flex;
+  gap: 24px;
+}

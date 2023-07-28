@@ -4,8 +4,17 @@ import { Path } from '../constants/paths';
 export const Home = () => {
   return (
     <div>
-      <h1>stack.management</h1>
-      <Link href={Path.Login}>Login</Link>
+      <header>
+        <Link href={Path.Home} className="highlight">
+          stack.management
+        </Link>
+        <nav>
+          <Link href={Path.Register}>Register</Link>
+          <Link href={Path.Login}>Login</Link>
+        </nav>
+      </header>
+
+      <h1>the worst todo app ever.</h1>
     </div>
   );
 };
