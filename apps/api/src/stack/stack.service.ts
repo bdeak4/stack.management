@@ -33,6 +33,10 @@ export class StackService {
   }
 
   async createStack(userId: number, name: string) {
+    if (!name) {
+      throw new BadRequestException('Stack name is required');
+    }
+
     return await this.prismaService.stack.create({
       data: {
         name,
@@ -93,6 +97,10 @@ export class StackService {
   }
 
   async createTask(userId: number, stackId: number, content: string) {
+    if (!content) {
+      throw new BadRequestException('Task content is required');
+    }
+
     const stack = await this.prismaService.stack.findFirst({
       where: {
         id: stackId,

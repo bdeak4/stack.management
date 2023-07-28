@@ -48,7 +48,7 @@ export const Header = () => {
         stack.management
       </Link>
       <nav>
-        <Link href={Path.Settings}>{jwt.username}</Link>
+        <Link href={`/${jwt.username}`}>{jwt.username}</Link>
         <a href="" onClick={handleLogout}>
           Logout
         </a>

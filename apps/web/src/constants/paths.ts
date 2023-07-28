@@ -5,6 +5,5 @@ export enum Path {
   Logout = '/logout',
   Stacks = '/stack',
   Stack = '/stack/:id',
-  Settings = '/settings',
   CatchAll = '/:path*',
 }

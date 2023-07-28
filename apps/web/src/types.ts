@@ -19,3 +19,8 @@ export type Task = {
 export type JwtResponse = {
   access_token: string;
 };
+
+export type UserStats = {
+  registrationDate: string;
+  completedTasksCount: number;
+};
