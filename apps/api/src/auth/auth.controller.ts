@@ -9,7 +9,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() { username, password }) {
-    return this.authService.register(username, password);
+    return await this.authService.register(username, password);
   }
 
   @UseGuards(LocalAuthGuard)

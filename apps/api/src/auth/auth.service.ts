@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -19,12 +19,16 @@ export class AuthService {
       where: { username: username },
     });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      throw new BadRequestException('Invalid username');
     }
 
-    return null;
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    const { password: _password, ...result } = user;
+    return result;
   }
 
   async login(user: User) {
@@ -34,21 +38,28 @@ export class AuthService {
   }
 
   async register(username: string, password: string) {
-    const user = await this.prismaService.user.create({
-      data: {
-        username,
-        password: await bcrypt.hash(password, 10),
+    try {
+      const user = await this.prismaService.user.create({
+        data: {
+          username,
+          password: await bcrypt.hash(password, 10),
 
-        stacks: {
-          create: {
-            name: 'default',
+          stacks: {
+            create: {
+              name: 'default',
+            },
           },
         },
-      },
-    });
+      });
 
-    const payload = { username: user.username, sub: user.id };
+      const payload = { username: user.username, sub: user.id };
 
-    return { access_token: this.jwtService.sign(payload) };
+      return { access_token: this.jwtService.sign(payload) };
+    } catch (err) {
+      if (err.code === 'P2002') {
+        throw new BadRequestException('Username already exists');
+      }
+      throw err;
+    }
   }
 }
