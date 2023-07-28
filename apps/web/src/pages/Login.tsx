@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 import { api } from '../utils/api';
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { JwtResponse } from '../types';
 
 export const LoginPage = () => {
   const [, setLocation] = useLocation();
@@ -19,16 +20,28 @@ export const LoginPage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const response = await api.post('/auth/login', {
-      username: event.currentTarget.username.value,
-      password: event.currentTarget.password.value,
-    });
+    const form = event.currentTarget;
+    const formElements = form.elements as typeof form.elements & {
+      username: HTMLInputElement;
+      password: HTMLInputElement;
+    };
 
-    if (response.data.access_token) {
-      toast.success('Logged in');
-      localStorage.setItem('access_token', response.data.access_token);
-      setLocation('/stack');
-    }
+    await toast.promise(
+      api.post<never, JwtResponse>('/auth/login', {
+        username: formElements.username.value,
+        password: formElements.password.value,
+      }),
+      {
+        loading: 'Logging in...',
+        success: ({ access_token }) => {
+          localStorage.setItem('access_token', access_token);
+          setLocation('/stack');
+
+          return 'Logged in';
+        },
+        error: (error) => error,
+      },
+    );
   };
 
   return (

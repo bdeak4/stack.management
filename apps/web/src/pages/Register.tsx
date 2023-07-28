@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 import { api } from '../utils/api';
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { JwtResponse } from '../types';
 
 export const RegisterPage = () => {
   const [, setLocation] = useLocation();
@@ -19,24 +20,34 @@ export const RegisterPage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (
-      event.currentTarget.password.value !==
-      event.currentTarget.repeatpassword.value
-    ) {
+    const form = event.currentTarget;
+    const formElements = form.elements as typeof form.elements & {
+      username: HTMLInputElement;
+      password: HTMLInputElement;
+      repeatpassword: HTMLInputElement;
+    };
+
+    if (formElements.password.value !== formElements.repeatpassword.value) {
       toast.error('Passwords do not match');
       return;
     }
 
-    const response = await api.post('/auth/register', {
-      username: event.currentTarget.username.value,
-      password: event.currentTarget.password.value,
-    });
+    await toast.promise(
+      api.post<never, JwtResponse>('/auth/register', {
+        username: formElements.username.value,
+        password: formElements.password.value,
+      }),
+      {
+        loading: 'Registering...',
+        success: ({ access_token }) => {
+          localStorage.setItem('access_token', access_token);
+          setLocation('/stack');
 
-    if (response.data.access_token) {
-      toast.success('Registered');
-      localStorage.setItem('access_token', response.data.access_token);
-      setLocation('/stack');
-    }
+          return 'Registered';
+        },
+        error: (error) => error,
+      },
+    );
   };
 
   return (

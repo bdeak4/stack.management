@@ -44,26 +44,28 @@ export const StackPage = () => {
       content: HTMLInputElement;
     };
 
-    const task = await toast.promise(
+    await toast.promise(
       api.post<never, Task>(`/stack/${stackId}/task`, {
         content: formElements.content.value,
       }),
       {
         loading: 'Creating task...',
-        success: 'Task created',
-        error: 'Failed to create task',
+        success: (task) => {
+          queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
+            return stacks.map((stack) =>
+              stack.id === stackId
+                ? { ...stack, tasks: [task, ...stack.tasks] }
+                : stack,
+            );
+          });
+
+          form.reset();
+
+          return 'Task created';
+        },
+        error: (error) => error,
       },
     );
-
-    queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
-      return stacks.map((stack) =>
-        stack.id === stackId
-          ? { ...stack, tasks: [task, ...stack.tasks] }
-          : stack,
-      );
-    });
-
-    form.reset();
   };
 
   const handleDeleteTask = async (taskId: number) => {
@@ -81,7 +83,7 @@ export const StackPage = () => {
     await toast.promise(api.delete(`/stack/${stackId}/task/${taskId}`), {
       loading: 'Deleting task...',
       success: 'Task deleted',
-      error: 'Failed to delete task',
+      error: (error) => error,
     });
   };
 
