@@ -124,7 +124,45 @@ form button {
   gap: 8px;
 }
 
-.stack-header-buttons {
+.stack-buttons {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+}
+
+.stack-add {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+  max-width: 400px;
+}
+
+.stack-add input {
+  flex-grow: 1;
+  /* width: 350px; */
+}
+
+.stack-add button {
+  margin-top: 0;
+}
+
+.task-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+}
+
+.task-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.move {
+  cursor: move;
 }

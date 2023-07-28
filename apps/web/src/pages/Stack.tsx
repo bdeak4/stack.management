@@ -4,7 +4,7 @@ import { api } from '../utils/api';
 import { AxiosResponse } from 'axios';
 import { Link, useLocation } from 'wouter';
 import clsx from 'clsx';
-import type { Stack } from '../types';
+import { Stack } from '../types';
 import { NotFoundPage } from './NotFound';
 
 export const StackPage = () => {
@@ -30,6 +30,10 @@ export const StackPage = () => {
     return <NotFoundPage />;
   }
 
+  const stack: Stack = data?.data.find(
+    (stack: Stack) => stack.id === activeStackId,
+  );
+
   return (
     <div>
       <Header />
@@ -50,13 +54,35 @@ export const StackPage = () => {
             </li>
           ))}
         </ul>
-        <div className="stack-header-buttons">
-          <button>Add stack</button>
-          <button>Remove stack</button>
+        <div className="stack-buttons">
+          <button>&#43;</button>
+          <button>rm</button>
         </div>
       </div>
 
-      <div className="stack-content">stack content</div>
+      <form className="stack-add">
+        <input name="content" type="text" placeholder="Task" />
+        <button>&#43;</button>
+      </form>
+
+      <ul className="task-list">
+        {stack.tasks.map((task) => (
+          <li key={task.id}>
+            <div className="content">{task.content}</div>
+            <div className="stack-buttons">
+              <button className="move">mv</button>
+              <button>rm</button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {stack.tasks.length === 0 &&
+        (stack._count.tasks === 0 ? (
+          <div>Add first task to {stack.name} stack</div>
+        ) : (
+          <div>Stack zero. Good job!</div>
+        ))}
     </div>
   );
 };

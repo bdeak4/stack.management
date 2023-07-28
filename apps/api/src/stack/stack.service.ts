@@ -17,6 +17,11 @@ export class StackService {
             deletedAt: null,
           },
         },
+        _count: {
+          select: {
+            tasks: true,
+          },
+        },
       },
     });
   }

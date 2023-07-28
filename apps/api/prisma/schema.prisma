@@ -18,14 +18,14 @@ model User {
 }
 
 model Stack {
-  id     Int    @id @default(autoincrement())
-  name   String
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int
+  id        Int       @id @default(autoincrement())
+  name      String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
-  tasks  Task[]
+  tasks     Task[]
 }
 
 model Task {
@@ -34,6 +34,6 @@ model Task {
   stack     Stack     @relation(fields: [stackId], references: [id])
   stackId   Int
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
 }
