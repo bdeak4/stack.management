@@ -9,6 +9,7 @@ import { NotFound } from './pages/NotFound';
 import { Path } from './constants/paths';
 import { Toaster } from 'react-hot-toast';
 import './index.css';
+import { StackRedirect } from './pages/StackRedirect';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Route path={Path.Login} component={Login} />
       <Route path={Path.Register} component={Register} />
       <Route path={Path.Stack} component={Stack} />
+      <Route path={Path.StackRedirect} component={StackRedirect} />
       <Route path={Path.CatchAll} component={NotFound} />
     </Switch>
     <Toaster />

@@ -1,18 +1,9 @@
-import { Link } from 'wouter';
-import { Path } from '../constants/paths';
+import { HeaderGuest } from '../components/HeaderGuest';
 
 export const Home = () => {
   return (
     <div>
-      <header>
-        <Link href={Path.Home} className="highlight">
-          stack.management
-        </Link>
-        <nav>
-          <Link href={Path.Register}>Register</Link>
-          <Link href={Path.Login}>Login</Link>
-        </nav>
-      </header>
+      <HeaderGuest />
 
       <h1>the worst todo app ever.</h1>
     </div>

@@ -29,7 +29,63 @@ header {
   margin-bottom: 24px;
 }
 
+header.guest {
+  margin-bottom: 72px;
+}
+
 nav {
   display: flex;
   gap: 24px;
+}
+
+h1 {
+  font-size: 64px;
+}
+
+.auth-layout {
+  display: flex;
+  gap: 32px;
+}
+
+.auth-layout h1 {
+  margin-top: 0;
+}
+
+.auth-layout form {
+  margin-top: 8px;
+}
+
+label {
+  display: block;
+  margin-bottom: 16px;
+}
+
+label input {
+  display: block;
+  margin-top: 6px;
+}
+
+input {
+  padding: 6px;
+  border: 1px solid #444;
+  border-radius: 3px;
+  background-color: #222;
+  color: #eee;
+  font-size: 16px;
+  font-family: 'Inconsolata', monospace;
+}
+
+button {
+  padding: 6px 12px;
+  border: 1px solid #444;
+  border-radius: 3px;
+  background-color: #222;
+  color: #eee;
+  font-size: 16px;
+  font-family: 'Inconsolata', monospace;
+  cursor: pointer;
+}
+
+form button {
+  margin-top: 4px;
 }
