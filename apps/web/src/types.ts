@@ -2,6 +2,8 @@ export type Stack = {
   id: number;
   name: string;
   tasks: Task[];
+  createdAt: string;
+  updatedAt: string;
   _count: {
     tasks: number;
   };
@@ -10,6 +12,6 @@ export type Stack = {
 export type Task = {
   id: number;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };

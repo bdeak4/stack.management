@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response.data,
   (error) => {
     toast.error(error.response.data.message || error.message);
 

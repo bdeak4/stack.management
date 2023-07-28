@@ -1,15 +1,19 @@
-import useSWR from 'swr';
 import { Header } from '../components/Header';
-import { api } from '../utils/api';
-import { AxiosResponse } from 'axios';
 import { Link, useLocation } from 'wouter';
 import clsx from 'clsx';
-import { Stack } from '../types';
 import { NotFoundPage } from './NotFound';
+import { api } from '../utils/api';
+import { Stack, Task } from '../types';
+import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { toast } from 'react-hot-toast';
 
 export const StackPage = () => {
-  const { data, isLoading } = useSWR<AxiosResponse>('/stack', api.get);
   const [location, setLocation] = useLocation();
+  const queryClient = useQueryClient();
+
+  const { data: stacks, isLoading } = useQuery('stack', () =>
+    api.get<never, Stack[]>('/stack'),
+  );
 
   if (isLoading) {
     return (
@@ -20,19 +24,40 @@ export const StackPage = () => {
     );
   }
 
-  const activeStackId = +location.split('/')[2];
+  const stackId = +location.split('/')[2];
 
-  if (!activeStackId) {
-    setLocation(`/stack/${data?.data[0].id}`);
+  if (!stackId && stacks?.length) {
+    setLocation(`/stack/${stacks[0].id}`); // TODO redirect to last updated
   }
 
-  if (!data?.data.some((stack: Stack) => stack.id === activeStackId)) {
+  const stack = stacks?.find((stack) => stack.id === stackId);
+
+  if (!stack) {
     return <NotFoundPage />;
   }
 
-  const stack: Stack = data?.data.find(
-    (stack: Stack) => stack.id === activeStackId,
-  );
+  const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formElements = form.elements as typeof form.elements & {
+      content: HTMLInputElement;
+    };
+
+    const task = await api.post<never, Task>(`/stack/${stack.id}/task`, {
+      content: formElements.content.value,
+    });
+
+    queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
+      return stacks.map((stack) =>
+        stack.id === stackId
+          ? { ...stack, tasks: [task, ...stack.tasks] }
+          : stack,
+      );
+    });
+
+    form.reset();
+  };
 
   return (
     <div>
@@ -40,13 +65,13 @@ export const StackPage = () => {
 
       <div className="stack-header">
         <ul className="stack-list">
-          {data?.data.map((stack: Stack) => (
+          {stacks!.map((stack) => (
             <li key={stack.id}>
               <Link
                 href={`/stack/${stack.id}`}
                 className={clsx({
-                  highlight: activeStackId === stack.id,
-                  'highlight-none': activeStackId !== stack.id,
+                  highlight: stackId === stack.id,
+                  'highlight-none': stackId !== stack.id,
                 })}
               >
                 {stack.name}
@@ -60,9 +85,15 @@ export const StackPage = () => {
         </div>
       </div>
 
-      <form className="stack-add">
-        <input name="content" type="text" placeholder="Task" />
-        <button>&#43;</button>
+      <form className="stack-add" onSubmit={handleAddTask}>
+        <input
+          name="content"
+          type="text"
+          placeholder="Task"
+          autoComplete="off"
+          required
+        />
+        <button type="submit">&#43;</button>
       </form>
 
       <ul className="task-list">
