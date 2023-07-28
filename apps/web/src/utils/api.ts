@@ -18,11 +18,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
       history.pushState(null, '', '/login');
       toast.error(error.response.data.message || error.message);
     }
-    return Promise.reject(error.response.data.message || error.message);
+    return Promise.reject(error.response?.data.message || error.message);
   },
 );

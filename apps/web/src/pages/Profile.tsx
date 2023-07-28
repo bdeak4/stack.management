@@ -41,8 +41,8 @@ export const ProfilePage = () => {
       <Header />
       <h1>{username}</h1>
       Completed {stats.completedTasksCount} tasks in {daysSinceRegistration}{' '}
-      days. Average of <span className="highlight">{avgTasksPerDay}</span> tasks
-      per day.
+      days. The average of <span className="highlight">{avgTasksPerDay}</span>{' '}
+      tasks per day.
     </div>
   );
 };

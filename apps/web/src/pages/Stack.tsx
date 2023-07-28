@@ -47,9 +47,6 @@ export const StackPage = () => {
         queryClient.setQueryData<Stack[]>('stack', (stacks = []) =>
           [...stacks, stack].sort(compareStacks),
         );
-
-        setLocation(`/stack/${stack.id}`);
-
         return 'Stack created';
       },
       error: (error) => error,
