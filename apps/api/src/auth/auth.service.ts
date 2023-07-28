@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -11,10 +10,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    username: string,
-    password: string,
-  ): Promise<Omit<User, 'password'> | null> {
+  async login(username: string, password: string) {
     const user = await this.prismaService.user.findUnique({
       where: { username: username },
     });
@@ -27,11 +23,6 @@ export class AuthService {
       throw new BadRequestException('Invalid password');
     }
 
-    const { password: _password, ...result } = user;
-    return result;
-  }
-
-  async login(user: User) {
     const payload = { username: user.username, sub: user.id };
 
     return { access_token: this.jwtService.sign(payload) };
