@@ -5,10 +5,18 @@ import { PrismaService } from 'src/prisma.service';
 export class StackService {
   constructor(private prismaService: PrismaService) {}
 
-  async getLastUsedStack(userId: number) {
-    return this.prismaService.stack.findFirst({
+  async getStacks(userId: number) {
+    return this.prismaService.stack.findMany({
       where: {
         userId,
+        deletedAt: null,
+      },
+      include: {
+        tasks: {
+          where: {
+            deletedAt: null,
+          },
+        },
       },
     });
   }

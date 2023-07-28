@@ -22,6 +22,18 @@ a:hover {
   text-decoration: none;
 }
 
+.highlight-secondary {
+  background-color: #333;
+  color: #eee;
+  padding: 2px 4px;
+  text-decoration: none;
+}
+
+.highlight-none {
+  padding: 2px 4px;
+  text-decoration: none;
+}
+
 header {
   display: flex;
   justify-content: space-between;
@@ -88,4 +100,31 @@ button {
 
 form button {
   margin-top: 4px;
+}
+
+.notification {
+  border: 1px solid #444;
+  border-radius: 6px;
+  background-color: #222;
+  color: #eee;
+}
+
+.stack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.stack-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.stack-header-buttons {
+  display: flex;
+  gap: 8px;
 }

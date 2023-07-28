@@ -1,9 +1,9 @@
-import { HeaderGuest } from '../components/HeaderGuest';
+import { Header } from '../components/Header';
 
-export const Home = () => {
+export const HomePage = () => {
   return (
     <div>
-      <HeaderGuest />
+      <Header />
 
       <h1>the worst todo app ever.</h1>
     </div>

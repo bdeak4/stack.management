@@ -1,10 +1,10 @@
 import { toast } from 'react-hot-toast';
-import { HeaderGuest } from '../components/HeaderGuest';
+import { Header } from '../components/Header';
 import { api } from '../utils/api';
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 
-export const Register = () => {
+export const RegisterPage = () => {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const Register = () => {
 
   return (
     <div>
-      <HeaderGuest />
+      <Header />
       <div className="auth-layout">
         <h1>Register</h1>
         <form onSubmit={handleSubmit}>

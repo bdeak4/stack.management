@@ -3,7 +3,8 @@ export enum Path {
   Login = '/login',
   Register = '/register',
   Logout = '/logout',
-  StackRedirect = '/stack',
+  Stacks = '/stack',
   Stack = '/stack/:id',
+  Settings = '/settings',
   CatchAll = '/:path*',
 }
