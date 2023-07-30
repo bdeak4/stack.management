@@ -34,6 +34,7 @@ model Stack {
 model Task {
   id        Int       @id @default(autoincrement())
   content   String
+  position  Decimal
   stack     Stack     @relation(fields: [stackId], references: [id])
   stackId   Int
   createdAt DateTime  @default(now())

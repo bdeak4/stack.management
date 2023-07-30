@@ -6,6 +6,22 @@ import { api } from '../utils/api';
 import { Stack, Task } from '../types';
 import { useQuery, useQueryClient } from 'react-query';
 import { toast } from 'react-hot-toast';
+import { SortableTask } from '../components/SortableTask';
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 const compareStacks = (a: Stack, b: Stack) => {
   if (a.name > b.name) return 1;
@@ -19,6 +35,13 @@ export const StackPage = () => {
 
   const { data: stacks, isLoading } = useQuery('stack', () =>
     api.get<never, Stack[]>('/stack'),
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   if (isLoading) {
@@ -54,7 +77,9 @@ export const StackPage = () => {
   };
 
   const handleDeleteStack = async () => {
-    if (!confirm('Are you sure?')) return;
+    if (!confirm('Are you sure?')) {
+      return;
+    }
 
     await toast.promise(api.delete(`/stack/${stackId}`), {
       loading: 'Deleting stack...',
@@ -122,6 +147,29 @@ export const StackPage = () => {
     });
   };
 
+  const handleMoveTask = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id === over?.id || !over) {
+      return;
+    }
+
+    queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
+      return stacks.map((stack) => {
+        if (stack.id !== stackId) {
+          return stack;
+        }
+
+        const fromIndex = stack.tasks.findIndex(({ id }) => id === active.id);
+        const toIndex = stack.tasks.findIndex(({ id }) => id === over.id);
+
+        return { ...stack, tasks: arrayMove(stack.tasks, fromIndex, toIndex) };
+      });
+    });
+
+    console.log(event);
+  };
+
   return (
     <div>
       <Header />
@@ -164,19 +212,24 @@ export const StackPage = () => {
       </form>
 
       <ul className="task-list">
-        {stack.tasks.map((task) => (
-          <li key={task.id}>
-            <div className="content">{task.content}</div>
-            <div className="stack-buttons">
-              <button type="button" className="move">
-                mv
-              </button>
-              <button type="button" onClick={() => handleDeleteTask(task.id)}>
-                rm
-              </button>
-            </div>
-          </li>
-        ))}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleMoveTask}
+        >
+          <SortableContext
+            items={stack.tasks}
+            strategy={verticalListSortingStrategy}
+          >
+            {stack.tasks.map((task) => (
+              <SortableTask
+                task={task}
+                handleDeleteTask={handleDeleteTask}
+                key={task.id}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
       </ul>
 
       {stack.tasks.length === 0 &&
