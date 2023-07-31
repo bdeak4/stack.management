@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Decimal } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class StackService {
             deletedAt: null,
           },
           orderBy: {
-            updatedAt: 'desc',
+            position: 'desc',
           },
         },
         _count: {
@@ -113,10 +114,26 @@ export class StackService {
       throw new BadRequestException('Stack not found');
     }
 
+    const prevTask = await this.prismaService.task.findFirst({
+      where: {
+        stackId,
+        deletedAt: null,
+      },
+      select: {
+        position: true,
+      },
+      orderBy: {
+        position: 'desc',
+      },
+    });
+
+    const position = prevTask ? prevTask.position.add(1) : new Decimal(1);
+
     return await this.prismaService.task.create({
       data: {
         content,
         stackId,
+        position,
       },
     });
   }
@@ -140,6 +157,62 @@ export class StackService {
       },
       data: {
         deletedAt: new Date(),
+      },
+    });
+  }
+
+  async moveTask(
+    userId: number,
+    stackId: number,
+    taskId: number,
+    prevTaskId: number,
+  ) {
+    const stack = await this.prismaService.stack.findFirst({
+      where: {
+        id: stackId,
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!stack) {
+      throw new BadRequestException('Stack not found');
+    }
+
+    const task = await this.prismaService.task.findUnique({
+      where: {
+        id: taskId,
+      },
+      select: {
+        position: true,
+      },
+    });
+
+    if (!task) {
+      throw new BadRequestException('Previous task not found');
+    }
+
+    const prevTask = await this.prismaService.task.findUnique({
+      where: {
+        id: prevTaskId,
+      },
+      select: {
+        position: true,
+      },
+    });
+
+    if (!prevTask) {
+      throw new BadRequestException('Previous task not found');
+    }
+
+    const positionOffset = task.position < prevTask.position ? 0.001 : -0.001;
+
+    return await this.prismaService.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        position: prevTask.position.add(positionOffset),
       },
     });
   }

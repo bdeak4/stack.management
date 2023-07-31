@@ -167,7 +167,9 @@ export const StackPage = () => {
       });
     });
 
-    console.log(event);
+    api.patch(`/stack/${stackId}/task/${active.id}/move`, {
+      prevTaskId: over.id,
+    });
   };
 
   return (

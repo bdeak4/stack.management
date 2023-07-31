@@ -11,6 +11,7 @@ export type Stack = {
 
 export type Task = {
   id: number;
+  position: number;
   content: string;
   createdAt: string;
   updatedAt: string;

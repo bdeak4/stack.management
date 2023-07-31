@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -55,5 +56,16 @@ export class StackController {
     @Param('taskId', ParseIntPipe) taskId: number,
   ) {
     return this.stackService.deleteTask(user.id, stackId, taskId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:stackId/task/:taskId/move')
+  moveTask(
+    @Req() { user },
+    @Param('stackId', ParseIntPipe) stackId: number,
+    @Param('taskId', ParseIntPipe) taskId: number,
+    @Body() { prevTaskId },
+  ) {
+    return this.stackService.moveTask(user.id, stackId, taskId, prevTaskId);
   }
 }
