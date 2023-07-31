@@ -103,13 +103,6 @@ form button {
   margin-top: 4px;
 }
 
-.notification {
-  border: 1px solid #444;
-  border-radius: 6px;
-  background-color: #222;
-  color: #eee;
-}
-
 .stack-header {
   display: flex;
   justify-content: space-between;
