@@ -48,6 +48,6 @@ jobs:
           context: .
           file: ./apps/api/Dockerfile
           push: true
-          tags: ghcr.io/stack-management:${{ github.sha }},ghcr.io/stack-management:latest
+          tags: ghcr.io/bdeak4/stack-management:${{ github.sha }},ghcr.io/bdeak4/stack-management:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
