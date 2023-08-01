@@ -1,9 +1,9 @@
 FROM node:18-alpine AS base
+LABEL org.opencontainers.image.source https://github.com/bdeak4/stack.management
 
 FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
-RUN apk update
 WORKDIR /app
 RUN yarn global add turbo
 COPY . .
@@ -12,7 +12,6 @@ RUN turbo prune --scope=api --docker
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
-RUN apk update
 WORKDIR /app
 
 COPY .gitignore .gitignore
@@ -29,6 +28,8 @@ RUN yarn turbo run build --filter=api...
 FROM base AS runner
 WORKDIR /app
 EXPOSE 3000
+HEALTHCHECK CMD curl -f http://localhost:3000/api/healthcheck || exit 1
+RUN apk add --no-cache curl
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
