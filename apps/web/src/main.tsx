@@ -26,7 +26,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </Switch>
       <Toaster
         toastOptions={{
-          className: 'notification',
+          style: {
+            border: '1px solid #444',
+            borderRadius: '6px',
+            backgroundColor: '#222',
+            color: '#eee',
+          },
           iconTheme: {
             primary: '#fdfd96',
             secondary: '#111',
