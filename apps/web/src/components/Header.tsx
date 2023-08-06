@@ -26,6 +26,9 @@ export const Header = () => {
           stack.management
         </Link>
         <nav>
+          <a href="https://github.com/bdeak4/stack.management" target="_blank">
+            Github
+          </a>
           <Link href={Path.Register}>Register</Link>
           <Link href={Path.Login}>Login</Link>
         </nav>

@@ -171,3 +171,13 @@ form button {
 .move {
   cursor: move;
 }
+
+.title {
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 48px;
+  }
+}
