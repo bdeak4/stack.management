@@ -156,6 +156,18 @@ form button {
   gap: 12px;
 }
 
+.task:hover .content::before {
+  content: '⋅';
+  position: absolute;
+  top: 0;
+  left: -12px;
+  color: #fdfd96;
+}
+
+.content {
+  position: relative;
+}
+
 .move {
   cursor: move;
 }
