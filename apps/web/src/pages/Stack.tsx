@@ -154,21 +154,19 @@ export const StackPage = () => {
       return;
     }
 
+    const fromIndex = stack.tasks.findIndex((t) => t.id === active.id);
+    const toIndex = stack.tasks.findIndex((t) => t.id === over.id);
+
     queryClient.setQueryData<Stack[]>('stack', (stacks = []) => {
       return stacks.map((stack) => {
-        if (stack.id !== stackId) {
-          return stack;
-        }
-
-        const fromIndex = stack.tasks.findIndex(({ id }) => id === active.id);
-        const toIndex = stack.tasks.findIndex(({ id }) => id === over.id);
-
-        return { ...stack, tasks: arrayMove(stack.tasks, fromIndex, toIndex) };
+        return stack.id === stackId
+          ? { ...stack, tasks: arrayMove(stack.tasks, fromIndex, toIndex) }
+          : stack;
       });
     });
 
     api.patch(`/stack/${stackId}/task/${active.id}/move`, {
-      prevTaskId: over.id,
+      index: fromIndex < toIndex ? toIndex + 1 : toIndex,
     });
   };
 
