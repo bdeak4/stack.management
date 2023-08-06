@@ -5,7 +5,7 @@ low distraction todo app that helps you prioritize and focus
 ## Self-hosting
 
 ```
-docker run -p 3000:3000 \
+docker run -d -p 3000:3000 --name stack-management \
   -e DATABASE_URL=postgresql://postgres:postgres@localhost:5432/stack-management \
   -e JWT_ACCESS_SECRET=5jmP48hmpMruJbkMD2Mf9YGRrw42zhFCBjETRS3D \
   ghcr.io/bdeak4/stack-management:latest
