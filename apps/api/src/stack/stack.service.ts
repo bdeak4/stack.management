@@ -170,59 +170,71 @@ export class StackService {
     userId: number,
     stackId: number,
     taskId: number,
-    prevTaskId: number,
+    index: number,
   ) {
-    const stack = await this.prismaService.stack.findFirst({
-      where: {
-        id: stackId,
-        userId,
-        deletedAt: null,
-        tasks: {
-          some: {
-            id: taskId,
+    if (index < 1) {
+      const task = await this.prismaService.task.findFirst({
+        where: {
+          stackId,
+          deletedAt: null,
+          stack: {
+            userId,
           },
         },
-      },
-    });
+        select: {
+          position: true,
+        },
+        orderBy: {
+          position: 'desc',
+        },
+      });
 
-    if (!stack) {
-      throw new BadRequestException('Stack not found');
+      if (!task) {
+        throw new BadRequestException('Task not found');
+      }
+
+      return await this.prismaService.task.update({
+        where: {
+          id: taskId,
+        },
+        data: {
+          position: task.position.add(1),
+        },
+      });
     }
 
-    const task = await this.prismaService.task.findUnique({
+    const [before, after] = await this.prismaService.task.findMany({
       where: {
-        id: taskId,
+        stackId,
+        deletedAt: null,
+        stack: {
+          userId,
+        },
       },
       select: {
         position: true,
       },
+      orderBy: {
+        position: 'desc',
+      },
+      skip: index - 1,
+      take: 2,
     });
 
-    if (!task) {
-      throw new BadRequestException('Previous task not found');
+    if (!before && !after) {
+      throw new BadRequestException('Task not found');
     }
 
-    const prevTask = await this.prismaService.task.findUnique({
-      where: {
-        id: prevTaskId,
-      },
-      select: {
-        position: true,
-      },
-    });
-
-    if (!prevTask) {
-      throw new BadRequestException('Previous task not found');
-    }
-
-    const positionOffset = task.position < prevTask.position ? 0.001 : -0.001;
+    const position = !!after
+      ? before.position.add(after.position).div(2)
+      : before.position.sub(1);
 
     return await this.prismaService.task.update({
       where: {
         id: taskId,
       },
       data: {
-        position: prevTask.position.add(positionOffset),
+        position,
       },
     });
   }

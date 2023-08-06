@@ -17,7 +17,7 @@ export const SortableTask: React.FC<Props> = ({ task, handleDeleteTask }) => {
   };
 
   return (
-    <li ref={setNodeRef} style={style}>
+    <li ref={setNodeRef} style={style} className="task">
       <div className="content">{task.content}</div>
       <div className="stack-buttons">
         <button type="button" className="move" {...attributes} {...listeners}>

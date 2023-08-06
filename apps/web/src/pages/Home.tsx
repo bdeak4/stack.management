@@ -5,7 +5,12 @@ export const HomePage = () => {
     <div>
       <Header />
 
-      <h1>the worst todo app ever.</h1>
+      <h1 className="title">
+        low distraction todo app that helps you{' '}
+        <span className="highlight">prioritize and focus</span>
+      </h1>
+
+      <p>Try it! It's free (and always will be)</p>
     </div>
   );
 };

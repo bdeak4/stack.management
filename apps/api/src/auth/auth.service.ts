@@ -11,6 +11,9 @@ export class AuthService {
   ) {}
 
   async login(username: string, password: string) {
+    if (!username) throw new BadRequestException("Missing 'username' field");
+    if (!password) throw new BadRequestException("Missing 'password' field");
+
     const user = await this.prismaService.user.findUnique({
       where: { username: username },
     });
@@ -29,6 +32,9 @@ export class AuthService {
   }
 
   async register(username: string, password: string) {
+    if (!username) throw new BadRequestException("Missing 'username' field");
+    if (!password) throw new BadRequestException("Missing 'password' field");
+
     try {
       const user = await this.prismaService.user.create({
         data: {

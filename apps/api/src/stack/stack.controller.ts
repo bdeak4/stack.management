@@ -64,8 +64,8 @@ export class StackController {
     @Req() { user },
     @Param('stackId', ParseIntPipe) stackId: number,
     @Param('taskId', ParseIntPipe) taskId: number,
-    @Body() { prevTaskId },
+    @Body() { index },
   ) {
-    return this.stackService.moveTask(user.id, stackId, taskId, prevTaskId);
+    return this.stackService.moveTask(user.id, stackId, taskId, index);
   }
 }

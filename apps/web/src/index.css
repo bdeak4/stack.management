@@ -156,6 +156,28 @@ form button {
   gap: 12px;
 }
 
+.task:hover .content::before {
+  content: '⋅';
+  position: absolute;
+  top: 0;
+  left: -12px;
+  color: #fdfd96;
+}
+
+.content {
+  position: relative;
+}
+
 .move {
   cursor: move;
+}
+
+.title {
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 48px;
+  }
 }
