@@ -38,4 +38,4 @@ USER nestjs
 COPY --from=installer --chown=nestjs:nestjs /app .
 COPY --chown=nestjs:nestjs apps/web/dist ./apps/web/dist
 
-CMD node apps/api/dist/src/main.js
+CMD yarn prisma migrate deploy && yarn start
