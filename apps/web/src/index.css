@@ -128,7 +128,6 @@ form button {
   gap: 12px;
   align-items: flex-end;
   margin-bottom: 12px;
-  max-width: 400px;
 }
 
 .stack-add input {
@@ -146,7 +145,16 @@ form button {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 400px;
+}
+
+@media screen and (min-width: 600px) {
+  .stack-add {
+    max-width: 400px;
+  }
+
+  .task-list {
+    max-width: 400px;
+  }
 }
 
 .task-list li {
